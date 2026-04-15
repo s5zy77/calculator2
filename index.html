@@ -16,13 +16,32 @@
   import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection, onSnapshot, query, orderBy, limit, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
   import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
 
-  // ─── Firebase Config — Fetched Dynamically ───────────────────
-  // Config is now securely fetched from the backend on startup
+  // ─── Firebase Config — Fetched Dynamically OR Fallback ────────
   async function initSentinel() {
+    let firebaseConfig = null;
     try {
       const response = await fetch('http://localhost:5000/api/config');
-      const { firebaseConfig } = await response.json();
-      
+      if (response.ok) {
+        const data = await response.json();
+        firebaseConfig = data.firebaseConfig;
+      } else {
+        throw new Error('Localhost backend unreachable');
+      }
+    } catch (err) {
+      console.warn('⚠️ Fetching dynamic config failed. Falling back to public production config.', err);
+      // Fallback to the known public Firebase keys for GitHub Pages deployment
+      firebaseConfig = {
+        apiKey: "AIzaSyAMqoT3WCr1z-7hjfQh_CwSO2xtwLyFwrI",
+        authDomain: "sentinel-dbd53.firebaseapp.com",
+        projectId: "sentinel-dbd53",
+        storageBucket: "sentinel-dbd53.firebasestorage.app",
+        messagingSenderId: "616231741193",
+        appId: "1:616231741193:web:b87b6c06a3920805bc55d8",
+        measurementId: "G-7X6SKTN2ER"
+      };
+    }
+
+    try {
       const app  = initializeApp(firebaseConfig);
       const auth = getAuth(app);
       const db   = getFirestore(app);
@@ -45,10 +64,9 @@
         }
       });
       
-      console.log('✅ Sentinel initialized with dynamic config');
-    } catch (err) {
-      console.error('❌ Failed to initialize Sentinel:', err);
-      // Fallback or Alert User
+      console.log('✅ Sentinel Firebase initialized successfully');
+    } catch (firebaseErr) {
+      console.error('❌ Failed to initialize Firebase:', firebaseErr);
     }
   }
 
