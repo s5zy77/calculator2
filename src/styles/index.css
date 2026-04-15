@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'DM Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-white select-none touch-pan-y;
+  }
+}
+
+/* Custom Utilities for Sentinel */
+@layer components {
+  .btn-primary {
+    @apply bg-mint hover:bg-mint-dark text-white font-semibold py-3 px-6 rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2;
+  }
+  
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl;
+  }
+  
+  .phone-container {
+    @apply relative mx-auto h-[100dvh] w-full max-w-md bg-slate-950 shadow-2xl shadow-mint/20 overflow-hidden lg:rounded-[3rem] lg:border-[12px] lg:border-slate-900 lg:h-[844px];
+  }
+
+  .scroll-region {
+    @apply overflow-y-auto overflow-x-hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scroll-region::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Calculator Grid specific spacing to ensure perfect alignment */
+.calc-button {
+  @apply aspect-square flex items-center justify-center text-xl font-medium rounded-2xl transition-all bg-white/5 hover:bg-white/10 active:bg-mint active:scale-90;
+}
+
+@keyframes scan-beam {
+  0% { top: 0; }
+  100% { top: 100%; }
+}
+
+.animate-scan-beam {
+  animation: scan-beam 2s ease-in-out infinite alternate;
+}
